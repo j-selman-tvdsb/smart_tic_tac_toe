@@ -6,11 +6,10 @@
         id        = "ca.tvdsb.TicTacToe"
         version   = "1.0.0">
 
-    <name>Tic Tac Toe</name>
+    <name>Smarter Tic Tac Toe</name>
 
     <description>
-       This is a beginning phoneGap applicaton.  There are no smarts to this Tic Tac Toe Game. 
-	   If you would like to take part in the TVDSB tic tac toe challenge, go to http://www.tvdsb.ca/tictactoechallenge for more details.
+       This is a beginning phoneGap applicaton.  
     </description>
 
     <author href="http://www.tvdsb.ca/webpages/jselman" email="j.selman@tvdsb.on.ca">
