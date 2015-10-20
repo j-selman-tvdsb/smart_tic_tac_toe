@@ -1,0 +1,576 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />             
+<title>Tic Tac Toe</title>
+
+<!--A Style tag within an html page shows how you want 
+items on the web page to look.  On this page I have defined
+a class called tictactoe box.  I want it to be square and have 
+large text that is centered.  This tic tac toe box
+will contain either the X or the O of a tic tac toe game.
+
+On a style tag a class is defined by using a period then the name of the class.
+Curly brackets define the start and the end of the class.  Items that are being altered
+have to be included from a specified value folllowed by the colan.
+
+
+The other item on the page I want to define is the reset button.
+Since this is the only button on this page.  I can overwrite the 
+look of all buttons that would be in this page.
+
+An html page can have lots of  style options.  So instead of putting them on the html page in script tags,  
+they can be placed on a separate file and referenced in the 
+html file. The file is called a css (cascading style sheet) file.
+ 
+
+
+-->
+
+<style>
+.tictactoebox 
+{
+width: 80px;
+height: 80px;
+font-size: 50pt;
+text-align:center;
+}
+
+button
+{
+width:240px;
+height:70px;
+font-size: 30pt;
+background-color:blue;
+color:white;
+}
+
+</style>
+	
+<script src="phonegap.js"></script>
+<script src="js/jquery-1.8.2.js"></script>
+	
+<script>
+
+
+//global variables
+
+var gamewon=false;
+var Oplayed=false;
+
+		
+//functions
+
+/*
+
+function name- determineIfGameWon
+developed by-John Selman
+edited by-
+purpose- check each of the conditions
+referenced by box number that would lead to
+a game being won.
+
+1 | 2 | 3
+--------
+4 | 5 | 6
+--------
+7 | 8 | 9
+
+
+
+*/
+
+function determineIfGameWon()
+{
+determineWinner(1,2,3);
+determineWinner(2,5,8);
+determineWinner(3,6,9);
+determineWinner(1,5,9);
+determineWinner(4,5,6);
+determineWinner(7,8,9);
+determineWinner(3,5,7);
+determineWinner(1,4,7);
+}
+
+/*
+
+function name- determineWinner
+developed by-John Selman
+edited by-
+purpose- uses jquery calls to check the 
+equality of the non blank values within 
+the tictactoe boxes.
+
+*/
+
+function determineWinner(x,y,z)
+{
+if 
+(
+$("#txtBox" + x).html()== $("#txtBox" + y).html() &&
+$("#txtBox" + x).html()== $("#txtBox" + z).html() &&
+$("#txtBox" + x).html()!= ""
+	
+)
+{
+makeRed(x,y,z);
+alert($("#txtBox" + x).html() + " wins!!!!!")
+gamewon=true;
+}
+}
+
+/*
+
+function name- makeRed
+developed by-John Selman
+edited by-
+purpose- alters the color of
+the tictactoe boxes referenced in the 
+parameters to red.  
+
+Called when a winning combination has been found.
+
+*/
+
+function makeRed(x,y,z)
+{
+var box ="#txtBox" + x;
+var box2 ="#txtBox" + y;
+var box3 ="#txtBox" + z;
+
+$(box).css('color', 'red');
+$(box2).css('color', 'red');
+$(box3).css('color', 'red');
+}
+
+
+/*
+
+function name- markX
+developed by-John Selman
+edited by-
+purpose- Uses jquery to place an X in the box the 
+user clicks.  Then a check is made to 
+see if the game is won.  If the game is not won, then
+a call is made for the computer to place its O value
+in the first available space. (Not too smart)
+
+*/
+function markX()
+{
+	if(gamewon==false)
+	{
+		
+		//event.target_id will be the id value of the tictacbox that was clicked.
+		//When concatinated with the # into a variable, It can be 
+		//used with jquery to place html within the tictactoe box.
+		Oplayed=false;
+		var box ="#" + event.target.id;
+		if($(box).html()=="")
+		{
+			$(box).html("X")
+			if (catsGame()==false)
+			{
+				determineIfGameWon();
+				if(gamewon==false)
+				{
+					makeMove();
+					determineIfGameWon();
+				}
+			}
+		}
+
+
+	}
+}
+
+function catsGame()
+{
+	var tieGame=true;
+	var x=1;
+		while(tieGame==true && x<10)
+		{
+			if($("#txtBox" + x).html()=="")
+			{
+				tieGame=false;
+				
+				
+			}
+						
+			x++;
+		}
+		
+		if(tieGame==true)
+		{
+			determineIfGameWon();
+			if(gamewon==false)
+			{
+				alert("Cat\'s Game");
+			}
+		
+		}
+		return tieGame
+}
+
+/*
+
+function name- clearSquares
+developed by-John Selman
+edited by-
+purpose- resets the playing surface.  Called when the 
+Clear button is clicked.
+
+*/
+
+function clearSquares()
+{
+for (x=0;x<10;x++)
+{
+	var txtBoxToClear = "#txtBox" + x;
+	$(txtBoxToClear).html("");
+	$(txtBoxToClear).css('color', 'black');
+	gamewon=false;
+	
+
+
+}
+}
+/*
+
+function name- findOpenSquare
+developed by-John Selman
+edited by-
+purpose- Places an O in the first available 
+tictactoe box.
+
+*/
+function findOpenSquare()
+{
+
+var x=1;
+var changemade=false;
+while(changemade==false)
+{
+
+	var txtBoxToCheck = "#txtBox" + x;
+	if ($(txtBoxToCheck).html()=="")
+	{
+		$(txtBoxToCheck).html("O");
+		changemade=true;
+					
+	}
+	
+	
+	x++;
+
+
+}
+
+}
+
+function makeMove()
+{
+		goForWin();
+		goForBlock();
+		if(Oplayed==false)
+			placeAtRnd("O")
+			
+		
+
+
+}
+
+
+function goForWin()
+{
+	placeAt1("O","O");
+	placeAt2("O","O");
+	placeAt3("O","O");
+	placeAt4("O","O");
+	placeAt5("O","O");
+	placeAt6("O","O");
+	placeAt7("O","O");
+	placeAt8("O","O");
+	placeAt9("O","O");
+	
+
+
+}
+
+function goForBlock()
+{
+	placeAt1("X","O");
+	if (Oplayed==false)
+		placeAt2("X","O");
+	if (Oplayed==false)
+		placeAt3("X","O");
+	if (Oplayed==false)
+		placeAt4("X","O");
+	if (Oplayed==false)
+		placeAt5("X","O");
+	if (Oplayed==false)
+		placeAt6("X","O");
+	if (Oplayed==false)
+		placeAt7("X","O");
+	if (Oplayed==false)
+		placeAt8("X","O");
+	if (Oplayed==false)
+		placeAt9("X","O");
+	
+
+
+}
+
+
+function placeAt1(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox2").html()==player && $("#txtBox3").html()==player)||
+			($("#txtBox5").html()==player && $("#txtBox9").html()==player)||
+			($("#txtBox4").html()==player && $("#txtBox7").html()==player))&&
+			($("#txtBox1").html()=="")
+	)
+	{
+		$("#txtBox1").html(symbol);
+		Oplayed=true;
+	}
+	
+	
+	
+
+
+}
+
+function placeAt2(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox1").html()==player && $("#txtBox3").html()==player)||
+			($("#txtBox5").html()==player && $("#txtBox8").html()==player))&&
+			($("#txtBox2").html()=="")
+			
+	)
+	{
+		$("#txtBox2").html(symbol);
+		Oplayed=true;
+	}
+
+}
+
+function placeAt3(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox1").html()==player && $("#txtBox2").html()==player)||
+			($("#txtBox6").html()==player && $("#txtBox9").html()==player)||
+			($("#txtBox7").html()==player && $("#txtBox5").html()==player))&&
+			($("#txtBox3").html()=="")
+	)
+	{
+		$("#txtBox3").html(symbol);
+		Oplayed=true;
+	}
+
+
+}
+
+function placeAt4(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox5").html()==player && $("#txtBox6").html()==player)||
+			($("#txtBox1").html()==player && $("#txtBox7").html()==player))&&
+			($("#txtBox4").html()=="")
+	)
+	{
+		$("#txtBox4").html(symbol);
+		Oplayed=true;
+	}	
+
+
+}
+
+function placeAt5(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox4").html()==player && $("#txtBox6").html()==player)||
+			($("#txtBox2").html()==player && $("#txtBox8").html()==player)||
+			($("#txtBox7").html()==player && $("#txtBox3").html()==player)||
+			($("#txtBox1").html()==player && $("#txtBox9").html()==player))&&
+			($("#txtBox5").html()=="")
+	)
+	{
+		$("#txtBox5").html(symbol);
+		Oplayed=true;
+	}
+
+
+}
+
+function placeAt6(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox4").html()==player && $("#txtBox5").html()==player)||
+			($("#txtBox3").html()==player && $("#txtBox9").html()==player))&&
+			($("#txtBox6").html()=="")
+	)
+	{
+		$("#txtBox6").html(symbol);
+		Oplayed=true;
+	}
+
+
+}
+
+function placeAt7(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox1").html()==player && $("#txtBox4").html()==player)||
+			($("#txtBox8").html()==player && $("#txtBox9").html()==player)||
+			($("#txtBox5").html()==player && $("#txtBox3").html()==player))&&
+			($("#txtBox7").html()=="")
+	)
+	{
+		$("#txtBox7").html(symbol);
+		Oplayed=true;
+	}
+
+
+}
+
+function placeAt8(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox2").html()==player && $("#txtBox5").html()==player)||
+			($("#txtBox7").html()==player && $("#txtBox9").html()==player))&&
+			($("#txtBox8").html()=="")
+	)
+	{
+		$("#txtBox8").html(symbol);
+		Oplayed=true;
+	}
+
+
+}
+
+function placeAt9(player,symbol)
+{
+
+	if(
+	
+			(($("#txtBox7").html()==player && $("#txtBox8").html()==player)||
+			($("#txtBox3").html()==player && $("#txtBox6").html()==player)||
+			($("#txtBox1").html()==player && $("#txtBox5").html()==player))&&
+			($("#txtBox9").html()=="")
+	)
+	{
+		$("#txtBox9").html(symbol);
+		Oplayed=true;
+	}
+
+
+}
+
+
+
+function placeAtRnd(player)
+{
+    var counter=1
+	var moveMade=false;
+	while(moveMade==false)
+	{
+	
+	var oPos = parseInt(Math.random() * 10);
+	if (counter==1) oPos=5;
+	if($("#txtBox5").html()=="X" && counter==1)
+		oPos = 1;
+	if($("#txtBox" + oPos).html()=="")
+	{
+		$("#txtBox" + oPos).html(player);
+		moveMade=true;
+		
+	}
+		counter++;
+	}
+	
+	
+
+
+}
+
+</script>
+</head>
+<body>
+
+
+
+
+
+
+<h2>Tic Tac Toe</h2>
+
+<table border="1">
+<tr>
+<td><div  id="txtBox1" class="tictactoebox"/></td>
+<td><div  id="txtBox2" class="tictactoebox"/></td>
+<td><div  id="txtBox3"class="tictactoebox"/></td>
+
+</tr>
+<tr>
+<td><div  id="txtBox4"class="tictactoebox"/></td>
+<td><div  id="txtBox5"class="tictactoebox"/></td>
+<td><div  id="txtBox6"class="tictactoebox"/></td>
+
+</tr>
+<tr>
+<td><div  id="txtBox7"class="tictactoebox"/></td>
+<td><div  id="txtBox8"class="tictactoebox"/></td>
+<td><div  id="txtBox9"class="tictactoebox"/></td>
+
+</tr>
+</table>
+<br/>
+<button id="btnClear">Clear</button>
+
+<script>
+
+
+//event listeners
+
+//uses jquery to listen for events on objects on the webpage
+//A . (dot) denotes listening for an event on a whole class of objects,
+//In this case a tictactoe box.
+
+//The # denotes the attaching an event to the unique id of a form object.
+
+
+$(".tictactoebox").click(markX);
+$("#btnClear").click(clearSquares)
+
+
+
+</script>
+
+
+
+</body>
+</html>
+
+
+
+
